@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Designer & Developer</title>
+    <style>
+        /* * GLOBAL RESET & TYPOGRAPHY
+         */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #111;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; /* Prevent scroll for hero section */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* * MAIN CONTAINER
+         * Holds the two split sections
+         */
+        .split-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            background: #111;
+        }
+
+        /* * SPLIT SECTIONS (COMMON)
+         */
+        .split {
+            position: relative;
+            height: 100%;
+            width: 50%; /* Default 50-50 split */
+            overflow: hidden;
+            transition: width 0.8s cubic-bezier(0.4, 0.0, 0.2, 1); /* Sangat smooth ease-in-out */
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* * INNER WRAPPER
+         * Keeps the image centered relative to the VIEWPORT.
+         */
+        .inner-wrapper {
+            position: absolute;
+            top: 0;
+            width: 100vw; /* Always full viewport width */
+            height: 100%;
+            display: flex;
+            justify-content: center; /* Center image horizontally */
+            align-items: flex-end; /* Align image to bottom */
+            overflow: hidden;
+        }
+
+        /* * SPECIFIC SIDES
+         */
+        
+        /* LEFT SIDE (DESIGNER) */
+        .split-left {
+            background-color: #f4f4f4;
+            color: #111;
+        }
+        
+        .split-left .inner-wrapper {
+            left: 0;
+        }
+
+        /* RIGHT SIDE (DEVELOPER) */
+        .split-right {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .split-right .inner-wrapper {
+            right: 0;
+        }
+
+
+        /* * IMAGES
+         * Full height 100vh as requested, no scaling.
+         */
+        .persona-img {
+            height: 100vh; /* Memenuhi layar secara vertikal */
+            width: auto;   /* Menjaga proporsi aspek rasio */
+            max-width: none; /* Mencegah batasan lebar container */
+            position: relative;
+            bottom: 0;
+            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1), filter 0.5s ease;
+            image-rendering: -webkit-optimize-contrast;
+            pointer-events: none;
+            
+            /* Initial state: Centered naturally */
+            transform: translateX(0);
+        }
+
+        /* Specific z-index to ensure layering is correct */
+        .split-left .persona-img {
+            z-index: 1;
+        }
+
+        .split-right .persona-img {
+            z-index: 1;
+        }
+
+        /* * TEXT CONTENT (LABELS)
+         */
+        .content {
+            position: absolute;
+            top: 45%;
+            transform: translateY(-50%);
+            z-index: 20;
+            text-align: center;
+            transition: all 0.6s ease-in-out;
+            opacity: 0.7;
+            white-space: nowrap;
+        }
+
+        .split-left .content {
+            left: 10vw;
+        }
+
+        .split-right .content {
+            right: 10vw;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+
+        .role-desc {
+            font-size: 1.2rem;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .cta-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            border: 2px solid currentColor;
+            background: transparent;
+            color: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease 0.1s;
+            border-radius: 50px;
+        }
+
+        /* * HOVER STATES (THE INTERACTION)
+         * Logic: 
+         * 1. Layout resize (width change)
+         * 2. Horizontal Shift (translateX)
+         * 3. NO SCALE/ZOOM
+         */
+
+        /* --- HOVER LEFT --- */
+        .hover-left .split-left {
+            width: 75%;
+        }
+        
+        .hover-left .split-right {
+            width: 25%;
+        }
+        
+        /* Geser gambar ke kiri, TANPA zoom */
+        .hover-left .split-left .persona-img {
+            transform: translateX(-40px); 
+            filter: brightness(1.05); /* Sedikit lebih terang untuk fokus */
+        }
+        
+        /* Gambar kanan meredup dan geser sedikit menjauh */
+        .hover-left .split-right .persona-img {
+            transform: translateX(40px); 
+            filter: grayscale(100%) brightness(0.4);
+        }
+
+        /* Content Visibility */
+        .hover-left .split-left .content {
+            opacity: 1;
+        }
+        
+        .hover-left .split-left .role-desc,
+        .hover-left .split-left .cta-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hover-left .split-right .content {
+            opacity: 0;
+            transform: translateY(-50%) translateX(50px);
+        }
+
+
+        /* --- HOVER RIGHT --- */
+        .hover-right .split-right {
+            width: 75%;
+        }
+        
+        .hover-right .split-left {
+            width: 25%;
+        }
+
+        /* Geser gambar ke kanan, TANPA zoom */
+        .hover-right .split-right .persona-img {
+            transform: translateX(40px);
+            filter: brightness(1.05);
+        }
+
+        /* Gambar kiri meredup dan geser sedikit menjauh */
+        .hover-right .split-left .persona-img {
+            transform: translateX(-40px);
+            filter: grayscale(100%) brightness(0.4);
+        }
+
+        /* Content Visibility */
+        .hover-right .split-right .content {
+            opacity: 1;
+        }
+
+        .hover-right .split-right .role-desc,
+        .hover-right .split-right .cta-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hover-right .split-left .content {
+            opacity: 0;
+            transform: translateY(-50%) translateX(-50px);
+        }
+
+        /* * DECORATIVE ELEMENTS
+         */
+        .code-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 1px,
+                    #333 1px,
+                    #333 2px
+                );
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* * MOBILE RESPONSIVENESS 
+         */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .split-left .content { left: 5vw; }
+            .split-right .content { right: 5vw; }
+
+            .persona-img {
+                /* Tetap 100vh di mobile agar full screen */
+                height: 100vh;
+                width: auto;
+                /* Adjust posisi horizontal jika perlu agar wajah center di mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="split-container" id="splitContainer">
+        
+        <!-- LEFT SIDE: DESIGNER -->
+        <div class="split split-left">
+            <div class="inner-wrapper">
+                <!-- Gunakan gambar desain.png di sini -->
+                <img src="img/bg/desain.png" alt="Designer Portrait" class="persona-img">
+            </div>
+            
+            <div class="content">
+                <h1>Designer</h1>
+                <p class="role-desc">Visual. UI/UX. Branding.</p>
+                <button class="cta-btn">View Designs</button>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: DEVELOPER -->
+        <div class="split split-right">
+            <div class="code-bg"></div> <!-- Texture overlay -->
+            <div class="inner-wrapper">
+                <!-- Gunakan gambar done1.png di sini -->
+                <img src="img/bg/done1.png" alt="Developer Portrait" class="persona-img">
+            </div>
+
+            <div class="content">
+                <h1>Developer</h1>
+                <p class="role-desc">Front-end. Back-end. Systems.</p>
+                <button class="cta-btn">View Code</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Select elements
+        const container = document.getElementById('splitContainer');
+        const leftSide = document.querySelector('.split-left');
+        const rightSide = document.querySelector('.split-right');
+
+        // Function to add hover class for Left
+        leftSide.addEventListener('mouseenter', () => {
+            container.classList.add('hover-left');
+            container.classList.remove('hover-right');
+        });
+
+        // Function to add hover class for Right
+        rightSide.addEventListener('mouseenter', () => {
+            container.classList.add('hover-right');
+            container.classList.remove('hover-left');
+        });
+
+        // Function to reset when mouse leaves the container
+        container.addEventListener('mouseleave', () => {
+            container.classList.remove('hover-left');
+            container.classList.remove('hover-right');
+        });
+
+        // Mobile / Touch Interaction Support
+        // Using 'touchstart' to mimic hover on tap
+        leftSide.addEventListener('touchstart', () => {
+            container.classList.add('hover-left');
+            container.classList.remove('hover-right');
+        });
+
+        rightSide.addEventListener('touchstart', () => {
+            container.classList.add('hover-right');
+            container.classList.remove('hover-left');
+        });
+    </script>
+</body>
+</html>
