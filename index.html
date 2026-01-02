@@ -36,12 +36,111 @@
         body {
             background-color: #050505;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
+            overflow: hidden; /* Penting untuk loading screen */
             height: 100vh;
             width: 100vw;
             color: var(--mono-text-body);
         }
 
+        /* ========================================= */
+        /* 🔥 LOADING PAGE STYLES (CURTAIN REVEAL) 🔥 */
+        /* ========================================= */
+        
+        #loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999; /* Pastikan di atas segalanya */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Tirai Hitam (Kiri & Kanan) */
+        .loader-curtain {
+            position: absolute;
+            top: 0;
+            width: 50.1%; /* Sedikit overlap agar tidak ada celah garis putih */
+            height: 100%;
+            background-color: #050505; /* Warna background utama */
+            z-index: 10000;
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1); /* Efek easing mewah */
+            will-change: transform;
+        }
+
+        .loader-curtain.left {
+            left: 0;
+            transform-origin: left;
+            border-right: 1px solid rgba(255,255,255,0.05); /* Garis halus di tengah */
+        }
+
+        .loader-curtain.right {
+            right: 0;
+            transform-origin: right;
+            border-left: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Konten Tengah (Text Loading) */
+        .loader-content {
+            position: relative;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-brand {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        /* Garis Progress Minimalis */
+        .loader-line {
+            width: 0%;
+            height: 2px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            transition: width 0.3s ease;
+        }
+        
+        /* Animasi Text Berkedip Halus */
+        .blink-text {
+            animation: breathe 2s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.98); }
+        }
+
+        /* STATE: LOADED (Ketika web sudah siap) */
+        body.loaded #loader-wrapper {
+            visibility: hidden;
+            transition: visibility 0s 1.2s; /* Delay visibility sampai animasi selesai */
+        }
+
+        body.loaded .loader-curtain.left {
+            transform: translateX(-100%); /* Geser ke kiri */
+        }
+
+        body.loaded .loader-curtain.right {
+            transform: translateX(100%); /* Geser ke kanan */
+        }
+
+        body.loaded .loader-content {
+            opacity: 0; /* Fade out content */
+        }
+
+
+        /* ========================================= */
         /* SCROLLBAR CUSTOMIZATION (Minimalist) */
         ::-webkit-scrollbar {
             width: 6px;
@@ -166,16 +265,18 @@
             margin-bottom: 1rem;
         }
 
+        /* 🔥 SECTION TITLE UPGRADED (BIGGER FONT) 🔥 */
         .section-title {
-            font-size: 0.85rem;
+            font-size: clamp(1.1rem, 1.5vw, 1.4rem); /* Diperbesar signifikan */
             text-transform: uppercase;
-            letter-spacing: 3px;
-            font-weight: 700;
-            margin-bottom: 1.2rem;
-            padding-bottom: 0.5rem;
+            letter-spacing: 2px;
+            font-weight: 800; /* Lebih tebal */
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
             display: inline-block;
             color: var(--mono-text-head);
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 2px solid rgba(255,255,255,0.3); /* Garis sedikit lebih tebal */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .content p {
@@ -242,30 +343,33 @@
             transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* Project Cards Grid - GLASSMORPHISM APPLIED */
+        /* 🔥 PROJECT GRID LAYOUT (WITH IMAGES & 2 COLS) 🔥 */
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Slightly wider for images */
+            /* Force 2 Columns exactly */
+            grid-template-columns: 1fr 1fr; 
             gap: 1.2rem;
         }
+
         .project-card {
             background: var(--glass-bg);
             backdrop-filter: blur(var(--glass-blur));
-            -webkit-backdrop-filter: blur(var(--glass-blur)); /* Safari support */
             border: var(--glass-border);
             border-radius: var(--glass-radius);
             
-            /* 🔥 UPDATED FOR IMAGES */
-            padding: 0; /* Reset padding for full bleed image */
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Clips image corners */
+            overflow: hidden;
             
             text-decoration: none;
             color: inherit;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            
+            /* Ensure text aligns left inside card */
+            text-align: left !important;
         }
+
         .project-card:hover {
             background: rgba(255,255,255,0.1);
             border-color: rgba(255,255,255,0.3);
@@ -273,37 +377,43 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
         
-        /* 🔥 NEW IMAGE STYLES */
+        /* Image Styling */
         .project-thumb {
             width: 100%;
-            height: 130px; /* Fixed height for consistency */
+            height: 120px; /* Fixed height compact */
             object-fit: cover;
-            filter: grayscale(100%) brightness(0.8) contrast(1.1); /* Deep dark monochrome */
+            filter: grayscale(100%) brightness(0.8) contrast(1.1);
             transition: transform 0.5s ease, filter 0.3s ease;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         
         .project-card:hover .project-thumb {
-            transform: scale(1.05); /* Subtle Zoom */
-            filter: grayscale(0%) brightness(0.9); /* Restore some life on hover */
+            transform: scale(1.05);
+            filter: grayscale(0%) brightness(0.9);
         }
 
         /* Text Wrapper inside Card */
         .project-info {
-            padding: 1.2rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .project-card h4 {
-            font-size: 0.95rem;
-            margin-bottom: 0.4rem;
+        .project-item-title {
+            font-size: 1rem;
             font-weight: 700;
             color: var(--mono-text-head);
+            margin-bottom: 0.3rem;
+            line-height: 1.2;
         }
-        .project-card span {
+        
+        .project-item-category {
             font-size: 0.8rem;
             color: var(--mono-text-sub);
-            display: block;
+            font-weight: 400;
         }
+
 
         /* BUTTONS (Solid Style) */
         .cta-btn {
@@ -383,8 +493,15 @@
 
         /* Alignment Fixes for Right Side items */
         .split-right .progress-bg { margin-left: auto; }
-        .split-right .project-grid { direction: rtl; }
-        .split-right .project-card { direction: ltr; text-align: right; }
+        
+        /* 🔥 Override for Right Side Project List to ensure readability */
+        .split-right .project-grid { 
+            direction: rtl; /* Makes columns flow from right */
+        }
+        .split-right .project-card { 
+            text-align: left !important; 
+            direction: ltr; /* Ensure text flows left-to-right inside the box */
+        }
         
         /* 🔥 TIMELINE ITEMS (DEFAULT) */
         .split-right .timeline-item {
@@ -438,8 +555,8 @@
         .split-right .timeline-head,
         .split-right .timeline-sub,
         .split-right .section-title,
-        .split-right .project-card h4,
-        .split-right .project-card span,
+        .split-right .project-item-title,
+        .split-right .project-item-category,
         .split-right .social-links a {
             /* Stroke Effect */
             -webkit-text-stroke: 0.4px #000000;
@@ -499,6 +616,141 @@
             transform: translateY(-50%) translateX(-50px);
         }
 
+        /* --- MAC DOCK FOOTER STYLE (UPDATED) --- */
+        
+        /* Main Container to hold Dock and Credit Text */
+        .footer-container {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* Space between icons and credit text */
+            z-index: 1000;
+        }
+
+        .dock-wrapper {
+            position: relative; /* Relative to footer-container */
+            display: flex;
+            align-items: flex-end; /* Align bottom so they grow up */
+            gap: 30px; /* 🔥 JARAK DIPERLEBAR */
+            padding: 10px;
+            
+            /* No Background as requested */
+            background: transparent; 
+            border-radius: 20px;
+        }
+
+        .dock-item {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px; /* Squircle shape like Mac Apps */
+            
+            /* 🔥 TEMA HITAM PUTIH (MONOCHROME) */
+            background: #0a0a0a; 
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #ffffff;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            
+            /* Default Shadow */
+            box-shadow: 0 6px 10px rgba(0,0,0,0.5);
+            
+            /* Transition */
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect specific to monochrome */
+        .dock-item:hover {
+            border-color: #ffffff;
+            background: #1a1a1a;
+            box-shadow: 0 8px 15px rgba(255,255,255,0.15);
+        }
+        
+        .dock-item i {
+            pointer-events: none;
+        }
+        
+        /* Tooltip simple */
+        .dock-item::after {
+            content: attr(aria-label);
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9); /* White tooltip for contrast on black */
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+        
+        .dock-item:hover::after {
+            opacity: 1;
+        }
+
+        /* 🔥 FOOTER CREDIT TEXT */
+        .footer-credit {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: var(--mono-text-sub);
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            opacity: 0.8;
+            pointer-events: none; /* Allows clicks to pass through if needed */
+        }
+        
+        /* 🔥 HEADER BRANDING STYLE UPGRADED 🔥 */
+        /* Mirip dengan gaya "DESIGNER" dan "DEVELOPER" tapi di tengah atas */
+        .header-branding {
+            position: fixed;
+            top: 25px; /* Sedikit turun agar tidak terpotong */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            
+            /* Remove capsule style */
+            background: transparent;
+            border: none;
+            padding: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+            
+            /* Typography matching Main Titles */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: clamp(2rem, 3.5vw, 3rem); /* Scalable tapi besar */
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px; /* Wide tracking */
+            color: #FFFFFF;
+            
+            /* Strong Shadow */
+            text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+            
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .header-branding:hover {
+            transform: translateX(-50%) scale(1.05); /* Subtle zoom on hover */
+            letter-spacing: 6px;
+            text-shadow: 0 6px 15px rgba(255,255,255,0.2);
+        }
+
+
         /* * MEDIA QUERIES */
         @media (max-width: 768px) {
             .content { 
@@ -510,17 +762,54 @@
             .split-right .content { right: 7vw; }
             .extra-content { gap: 1.5rem; }
             
-            .split-right .project-grid { direction: ltr; }
-            .split-right .project-card { text-align: left; }
             .split-right .extra-content { align-items: flex-end; text-align: right; }
             .split-right .timeline-item { 
                 padding-right: 1rem; 
                 border-right: 2px solid rgba(255,255,255,0.1);
             }
+
+            /* Adjust dock for mobile */
+            .footer-container {
+                bottom: 15px;
+                gap: 10px;
+            }
+            .dock-wrapper {
+                gap: 15px; /* Smaller gap on mobile but still separated */
+            }
+            .dock-item {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            
+            /* Adjust header for mobile */
+            .header-branding {
+                top: 15px;
+                font-size: 1.5rem; /* Smaller on mobile but still bold */
+            }
+            
+            /* Adjust Loader for mobile */
+            .loader-brand { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
+
+    <!-- 🔥 LOADING PAGE WRAPPER 🔥 -->
+    <!-- Elemen ini akan muncul pertama kali dan menutupi segalanya -->
+    <div id="loader-wrapper">
+        <div class="loader-curtain left"></div>
+        <div class="loader-curtain right"></div>
+        <div class="loader-content">
+            <div class="loader-brand blink-text">AKAKPUNYA</div>
+            <div class="loader-line" id="loaderLine"></div>
+        </div>
+    </div>
+
+    <!-- 🔥 HEADER BRANDING (TOP) 🔥 -->
+    <div class="header-branding" id="topHeader">
+        AkakPunya
+    </div>
 
     <div class="split-container" id="splitContainer">
         
@@ -541,57 +830,56 @@
                             <p>Memiliki ketertarikan pada UI/UX, fotografi, dan videografi. Fokus pada menciptakan pengalaman digital yang estetis dan fungsional.</p>
                         </div>
 
-                        <!-- Projects: Visual & UX -->
+                        <!-- Projects: Visual & UX (GRID WITH IMAGES) -->
                         <div class="section-block">
                             <span class="section-title">My Work (UI/UX & Web)</span>
                             <div class="project-grid">
                                 <a href="https://www.figma.com/design/eDYCV7WGx0QM2jIkaKPCfJ/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Mental+Health+UI" alt="Mental Health App" class="project-thumb">
+                                    <img src="img/exp/calm.png" alt="Mental Health App" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Mental Health App</h4>
-                                        <span>Figma UX Journey</span>
+                                        <span class="project-item-title">Mental Health App</span>
+                                        <span class="project-item-category">Figma UX Journey</span>
                                     </div>
                                 </a>
                                 <a href="https://www.figma.com/design/tic3DJveZcQmkQ6JMJsgCm/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Workout+App" alt="Workout App" class="project-thumb">
+                                    <img src="img/exp/workout.png" alt="Workout App" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Workout App</h4>
-                                        <span>Figma Design</span>
+                                        <span class="project-item-title">Workout App</span>
+                                        <span class="project-item-category">Figma Design</span>
                                     </div>
                                 </a>
                                 <a href="https://www.figma.com/design/WgRjvDSD9OXc5O1PFevTg0/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Dating+App+UI" alt="Dating App" class="project-thumb">
+                                    <img src="img/exp/workout.png" alt="Dating App" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Dating App</h4>
-                                        <span>Figma Design</span>
+                                        <span class="project-item-title">Dating App</span>
+                                        <span class="project-item-category">Figma Design</span>
                                     </div>
                                 </a>
                                 <a href="https://aliftanmalaka.github.io/geo-tani/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Geo+Tani+Web" alt="Geo Tani" class="project-thumb">
+                                    <img src="img/exp/geotani.png" alt="Geo Tani" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Geo Tani</h4>
-                                        <span>Web Design</span>
+                                        <span class="project-item-title">Geo Tani</span>
+                                        <span class="project-item-category">Web Design</span>
                                     </div>
                                 </a>
                                 <a href="https://aliftanmalaka.github.io/Just_Undangan_Pernikahan/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Undangan+Digital" alt="Undangan Digital" class="project-thumb">
+                                    <img src="img/exp/undangan.png" alt="Undangan Digital" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Undangan Digital</h4>
-                                        <span>Web Project</span>
+                                        <span class="project-item-title">Undangan Digital</span>
+                                        <span class="project-item-category">Web Project</span>
                                     </div>
                                 </a>
                                 <a href="https://aliftanmalaka.github.io/justAkak_4fun/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Personal+Site" alt="Just_4fun v3" class="project-thumb">
+                                    <img src="img/exp/Screenshot 2025-07-09 003919.png" alt="Just_4fun v3" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Just_4fun v3</h4>
-                                        <span>Personal Site</span>
+                                        <span class="project-item-title">Just_4fun v3</span>
+                                        <span class="project-item-category">Personal Site</span>
                                     </div>
                                 </a>
                             </div>
                         </div>
 
                         <!-- Skills: Visual -->
-                        <!-- 🔥 ADDED: Animation Classes and Data Attributes -->
                         <div class="section-block">
                             <span class="section-title">Design Skills</span>
                             <div class="skill-container">
@@ -677,36 +965,36 @@
                             </div>
                         </div>
 
-                        <!-- Projects: Code & System -->
+                        <!-- Projects: Code & System (GRID WITH IMAGES) -->
                         <div class="section-block">
                             <span class="section-title">System & Code</span>
                             <div class="project-grid">
                                 <a href="https://github.com/aliftanmalaka/praktikum-cape" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Sistem+Peminjaman" alt="Sistem Peminjaman" class="project-thumb">
+                                    <img src="img/exp/IMG_5045.JPEG" alt="Sistem Peminjaman" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Sistem Peminjaman</h4>
-                                        <span>Web App (Balaikota)</span>
+                                        <span class="project-item-title">Sistem Peminjaman</span>
+                                        <span class="project-item-category">Web App (Balaikota)</span>
                                     </div>
                                 </a>
                                 <a href="https://github.com/aliftanmalaka/Aplikasi_perpustakaan_menggunakan_python" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Library+Python+App" alt="Library App" class="project-thumb">
+                                    <img src="img/exp/python.png" alt="Library App" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Library App</h4>
-                                        <span>Python</span>
+                                        <span class="project-item-title">Library App</span>
+                                        <span class="project-item-category">Python</span>
                                     </div>
                                 </a>
                                 <a href="https://eprints.umm.ac.id/id/eprint/17258/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Usability+Report" alt="Analisis Usability" class="project-thumb">
+                                    <img src="img/exp/sus.png" alt="Analisis Usability" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>Analisis Usability</h4>
-                                        <span>Repository UMM</span>
+                                        <span class="project-item-title">Analisis Usability</span>
+                                        <span class="project-item-category">Repository UMM</span>
                                     </div>
                                 </a>
                                 <a href="https://aliftanmalaka.github.io/My_lailia_project_4fun/" target="_blank" class="project-card">
-                                    <img src="https://placehold.co/600x400/222222/888888?text=Company+Profile" alt="PT Lailia" class="project-thumb">
+                                    <img src="img/exp/Lailia.png" alt="PT Lailia" class="project-thumb">
                                     <div class="project-info">
-                                        <h4>PT Lailia</h4>
-                                        <span>Company Profile</span>
+                                        <span class="project-item-title">PT Lailia</span>
+                                        <span class="project-item-category">Company Profile</span>
                                     </div>
                                 </a>
                             </div>
@@ -717,7 +1005,6 @@
                             <span class="section-title">Tech Stack</span>
                             <!-- Wrapped in Selective Glass (All items inside one consistent bordered box) -->
                             <div class="selective-glass">
-                                <!-- 🔥 ADDED: Animation Classes and Data Attributes -->
                                 <div class="skill-container">
                                     <div class="skill-label"><span>Programming Logic</span><span class="skill-percent" data-target="60">0%</span></div>
                                     <div class="progress-bg"><div class="progress-fill" data-width="60%" style="width: 0%"></div></div>
@@ -763,7 +1050,64 @@
 
     </div>
 
+    <!-- 🔥 NEW FOOTER DOCK (MAC STYLE) UPDATED 🔥 -->
+    <div class="footer-container">
+        <div class="dock-wrapper" id="macDock">
+            <div class="dock-item instagram" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+            </div>
+            <div class="dock-item figma" aria-label="Design">
+                <i class="fab fa-figma"></i>
+            </div>
+            <div class="dock-item github" aria-label="GitHub">
+                <i class="fab fa-github"></i>
+            </div>
+            <div class="dock-item linkedin" aria-label="LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+            </div>
+            <div class="dock-item gmail" aria-label="Email">
+                <i class="fas fa-envelope"></i>
+            </div>
+        </div>
+        <div class="footer-credit">created by Gemini and AkakPunya</div>
+    </div>
+
     <script>
+        // ==========================================
+        // 🔥 LOADING PAGE LOGIC 🔥
+        // ==========================================
+        
+        // Fungsi untuk menghilangkan loader dengan animasi
+        function hideLoader() {
+            // Beri sedikit delay agar user bisa melihat brand "AKAKPUNYA" sejenak
+            setTimeout(() => {
+                // Set garis progress menjadi 100% sebelum membuka
+                const loaderLine = document.getElementById('loaderLine');
+                if(loaderLine) loaderLine.style.width = '100%';
+                
+                // Trigger transisi "loaded"
+                setTimeout(() => {
+                    document.body.classList.add('loaded');
+                }, 500); // Tunggu 0.5s setelah garis penuh
+            }, 800); // Delay awal minimal 0.8s
+        }
+
+        // Event listener: Menunggu semua aset (gambar, style, dll) selesai di-load
+        window.addEventListener('load', hideLoader);
+
+        // Fallback: Jika loading terlalu lama (misal gambar error/lambat),
+        // paksa buka setelah 5 detik agar user tidak stuck
+        setTimeout(() => {
+            if (!document.body.classList.contains('loaded')) {
+                hideLoader();
+            }
+        }, 5000);
+
+
+        // ==========================================
+        // 🔥 EXISTING PORTFOLIO LOGIC 🔥
+        // ==========================================
+
         const container = document.getElementById('splitContainer');
         const leftSide = document.querySelector('.split-left');
         const rightSide = document.querySelector('.split-right');
@@ -796,13 +1140,58 @@
             container.classList.remove('hover-left');
         });
 
+        /* 🔥 DOCK INTERACTION LOGIC (Split Screen Reset) 🔥 */
+        const dock = document.getElementById('macDock');
+        const dockItems = document.querySelectorAll('.dock-item');
+
+        // 1. Reset Split Screen when hovering dock
+        dock.addEventListener('mouseenter', () => {
+            container.classList.remove('hover-left');
+            container.classList.remove('hover-right');
+        });
+        
+        // Prevent click on dock items from bubbling up to split pane click handlers (if any)
+        dock.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // 2. Mac Dock Magnification Animation
+        dock.addEventListener('mousemove', (e) => {
+            dockItems.forEach(item => {
+                const rect = item.getBoundingClientRect();
+                const itemCenterX = rect.left + rect.width / 2;
+                const distance = Math.abs(e.clientX - itemCenterX);
+                
+                let scale = 1;
+                if (distance < 150) {
+                    const strength = 1 - (distance / 150);
+                    scale = 1 + (0.5 * strength);
+                }
+                
+                item.style.transform = `scale(${scale}) translateY(${ (scale - 1) * -10 }px)`;
+            });
+        });
+
+        // 3. Reset scales when mouse leaves dock
+        dock.addEventListener('mouseleave', () => {
+            dockItems.forEach(item => {
+                item.style.transform = 'scale(1) translateY(0)';
+            });
+        });
+
+        // 🔥 HEADER INTERACTION LOGIC (Reset) 🔥
+        const header = document.getElementById('topHeader');
+        header.addEventListener('mouseenter', () => {
+             container.classList.remove('hover-left');
+             container.classList.remove('hover-right');
+        });
+
         // 🔥 SCROLL TRIGGERED ANIMATION LOGIC 🔥
         document.addEventListener('DOMContentLoaded', () => {
-            // Observer Configuration
             const observerOptions = {
-                root: null, // viewport
+                root: null, 
                 rootMargin: '0px',
-                threshold: 0.2 // Trigger when 20% visible
+                threshold: 0.2
             };
 
             const skillObserver = new IntersectionObserver((entries, observer) => {
@@ -810,53 +1199,44 @@
                     if (entry.isIntersecting) {
                         const container = entry.target;
                         
-                        // 1. Animate Progress Bar Width
                         const bar = container.querySelector('.progress-fill');
                         if (bar) {
                             const targetWidth = bar.getAttribute('data-width');
-                            // Delay slightly for visual separation
                             setTimeout(() => {
                                 bar.style.width = targetWidth;
                             }, 100);
                         }
 
-                        // 2. Animate Percentage Counter
                         const counter = container.querySelector('.skill-percent');
                         if (counter) {
                             const targetNum = parseInt(counter.getAttribute('data-target'));
-                            animateCounter(counter, 0, targetNum, 1200); // 1.2s duration
+                            animateCounter(counter, 0, targetNum, 1200); 
                         }
 
-                        // Stop observing once animated
                         observer.unobserve(container);
                     }
                 });
             }, observerOptions);
 
-            // Select all skill containers in both Designer and Developer sections
             const skillContainers = document.querySelectorAll('.skill-container');
             skillContainers.forEach(el => {
                 skillObserver.observe(el);
             });
         });
 
-        // Helper function for smooth number counting
         function animateCounter(obj, start, end, duration) {
             let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                
-                // Ease Out Quart Formula for smooth landing
                 const easeProgress = 1 - Math.pow(1 - progress, 4); 
-                
                 const currentVal = Math.floor(easeProgress * (end - start) + start);
                 obj.textContent = currentVal + "%";
                 
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 } else {
-                     obj.textContent = end + "%"; // Ensure final value is exact
+                     obj.textContent = end + "%";
                 }
             };
             window.requestAnimationFrame(step);
